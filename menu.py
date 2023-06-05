@@ -1,3 +1,6 @@
+from auxiliary import *
+
+
 def main_menu_command() -> str:
     print("ГЛАВНОЕ МЕНЮ")
     print("""Введите номер команды:
@@ -9,10 +12,7 @@ def main_menu_command() -> str:
     "6": Удалить ВСЕ заметки
     "0": Завершение работы
     """)
-    command = input('Ввод: ').strip()
-    while command not in ('1', '2', '3', '4', '5', '6', '0'):
-        print('Некорректный ввод, попробуйте еще раз:')
-        command = input('Ввод: ').strip()
+    command = get_correct_input(lambda x: x.strip() in ['1', '2', '3', '4', '5', '6', '0'])
     return command
 
 
@@ -22,8 +22,5 @@ def note_managing_menu_command() -> str:
         "2": Редактировать выбранную заметку
         "0": Главное меню
         """)
-    command = input('Ввод: ').strip()
-    while command not in ('1', '2', '0'):
-        print('Некорректный ввод, попробуйте еще раз:')
-        command = input('Ввод: ').strip()
+    command = get_correct_input(lambda x: x.strip() in ['1', '2', '0'])
     return command

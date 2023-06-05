@@ -8,3 +8,4 @@ while command != '0':
     command = main_menu_command()
 
 print('ЗАВЕРШЕНИЕ РАБОТЫ')
+0

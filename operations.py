@@ -1,5 +1,14 @@
-from datetime import datetime
+from auxiliary import *
 import json
+
+
+def print_note(note: dict):
+    print(f"ID: {note['ID']}")
+    print(f"НАЗВАНИЕ: {note['title']}")
+    print(f"СОДЕРЖИМОЕ:")
+    print(note['content'])
+    print(f"ПОСЛЕДНЕЕ ИЗМЕНЕНИЕ: {note['last_modified']}")
+    print('----------------------------------------------------------')
 
 
 def print_all():
@@ -8,12 +17,27 @@ def print_all():
     if not notes:
         print('Заметок нет...')
         return
-    for note in notes.values():
-        print_note(note)
+    id_in_order = sorted(notes.keys(), key=lambda x: datetime.strptime(notes[x]['last_modified'], '%d/%m/%Y %H:%M:%S'))
+    for note_id in id_in_order:
+        print_note(notes[note_id])
 
 
 def print_in_date_range():
-    pass
+    print("Введите левую границу диапазона:")
+    left_boundary = get_date()
+    print()
+    print("Введите правую границу диапазона:")
+    right_boundary = get_date()
+    with open('Notes.json', encoding='UTF-8') as fp:
+        notes = json.load(fp)
+    id_list = [note_id for note_id in notes.keys() if
+               left_boundary <= datetime.strptime(notes[note_id]['last_modified'],
+                                                  '%d/%m/%Y %H:%M:%S') <= right_boundary]
+    id_list_in_order = sorted(id_list, key=lambda x: datetime.strptime(notes[x]['last_modified'], '%d/%m/%Y %H:%M:%S'))
+    print(f"Заметки из диапазона {datetime.strftime(left_boundary, '%d/%m/%Y')} "
+          f"- {datetime.strftime(right_boundary, '%d/%m/%Y')}:")
+    for note_id in id_list_in_order:
+        print_note(notes[note_id])
 
 
 def get_note_by_id() -> dict:
@@ -36,12 +60,9 @@ def create_new_note():
 
     new_note['title'] = input("Введите НАЗВАНИЕ заметки: ")
 
-    print("Введите СОДЕРЖИМОЕ заметки:\n Для завершения ввода введите пустую строку:")
-    new_note_content = ''
-    new_line = input()
-    while new_line != '':
-        new_note_content += new_line + '\n'
-        new_line = input()
+    print("Введите СОДЕРЖИМОЕ заметки,")
+    new_note_content = get_multiline_input()
+
     new_note['content'] = new_note_content
 
     new_note['ID'] = max([int(note_id) for note_id in notes.keys()]) + 1 if notes else 1
@@ -81,10 +102,8 @@ def edit_note(note: dict):
             "1": Да
             "2": Нет
             """)
-    command = input('Ввод: ').strip()
-    while command not in ('1', '2'):
-        print('Некорректный ввод, попробуйте еще раз:')
-        command = input('Ввод: ').strip()
+    command = get_correct_input(lambda x: x.strip() in ['1', '2'])
+
     match command:
         case '1':
             note['title'] = input("Введите новое название: ")
@@ -95,18 +114,12 @@ def edit_note(note: dict):
                 "1": Да
                 "2": Нет
                 """)
-    command = input('Ввод: ').strip()
-    while command not in ('1', '2'):
-        print('Некорректный ввод, попробуйте еще раз:')
-        command = input('Ввод: ').strip()
+    command = get_correct_input(lambda x: x.strip() in ['1', '2'])
+
     match command:
         case '1':
-            print("Введите новое содержимое заметки:\n Для завершения ввода введите пустую строку:")
-            new_note_content = ''
-            new_line = input()
-            while new_line != '':
-                new_note_content += new_line + '\n'
-                new_line = input()
+            print("Введите новое содержимое заметки,")
+            new_note_content = get_multiline_input()
             note['content'] = new_note_content
         case '2':
             pass
@@ -118,12 +131,3 @@ def edit_note(note: dict):
     notes[note['ID']] = note
     with open('Notes.json', 'w', encoding='UTF-8') as fp:
         json.dump(notes, fp, indent=4)
-
-
-def print_note(note: dict):
-    print(f"ID: {note['ID']}")
-    print(f"НАЗВАНИЕ: {note['title']}")
-    print(f"СОДЕРЖИМОЕ:")
-    print(note['content'])
-    print(f"ПОСЛЕДНЕЕ ИЗМЕНЕНИЕ: {note['last_modified']}")
-    print('----------------------------------------------------------')
