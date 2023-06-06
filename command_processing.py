@@ -11,13 +11,16 @@ def main_menu_command_handler(command: str):
         case '3':
             note_search()
         case '4':
-            note = get_note_by_id()
-            if note:
-                print("\nРАБОТА С ЗАМЕТКОЙ:")
-                print_note(note)
-                note_processing_menu_command_handler(note_managing_menu_command(), note)
+            if no_notes():
+                return
             else:
-                print("Нет заметки с таким ID")
+                note = get_note_by_id()
+                if note:
+                    print("\nРАБОТА С ЗАМЕТКОЙ:\n")
+                    print_note(note)
+                    note_processing_menu_command_handler(note_managing_menu_command(), note)
+                else:
+                    print("\nНет заметки с таким ID\n")
         case '5':
             create_new_note()
         case '6':
