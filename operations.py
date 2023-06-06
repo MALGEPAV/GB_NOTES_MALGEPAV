@@ -49,8 +49,8 @@ def print_in_date_range():
         print("\nНет заметок из указанного диапазона...\n")
         return
     id_list_in_order = sorted(id_list, key=lambda x: datetime.strptime(notes[x]['last_modified'], '%d/%m/%Y %H:%M:%S'))
-    print(f"Заметки из диапазона {datetime.strftime(left_boundary, '%d/%m/%Y')} "
-          f"- {datetime.strftime(right_boundary, '%d/%m/%Y')}:")
+    print(f"\nЗаметки из диапазона {datetime.strftime(left_boundary, '%d/%m/%Y')} "
+          f"- {datetime.strftime(right_boundary, '%d/%m/%Y')}:\n")
     for note_id in id_list_in_order:
         print_note(notes[note_id])
 
